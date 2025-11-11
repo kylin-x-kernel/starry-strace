@@ -45,3 +45,25 @@ pub fn waitpid(pid: i32, status: &mut i32, options: i32) -> io::Result<i32> {
         }
     }
 }
+
+// Helper function to attach to a running process (safe wrapper)
+pub fn ptrace_attach(pid: i32) -> io::Result<()> {
+    unsafe {
+        if libc::ptrace(libc::PTRACE_ATTACH, pid, 0, 0) == -1 {
+            Err(io::Error::last_os_error())
+        } else {
+            Ok(())
+        }
+    }
+}
+
+// Helper function to detach from a traced process (safe wrapper)
+pub fn ptrace_detach(pid: i32) -> io::Result<()> {
+    unsafe {
+        if libc::ptrace(libc::PTRACE_DETACH, pid, 0, 0) == -1 {
+            Err(io::Error::last_os_error())
+        } else {
+            Ok(())
+        }
+    }
+}
